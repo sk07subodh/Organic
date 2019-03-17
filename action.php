@@ -1,9 +1,10 @@
 <?php
-include "session.php";
+session_start();
 
 $ip_add = getenv("REMOTE_ADDR");
 
 include "db.php";
+
 
 if(isset($_POST["category"])){
 	$category_query = "SELECT * FROM categories";
@@ -55,7 +56,7 @@ if(isset($_POST["getProduct"]))
 		$start = 0;
 	}
 	
-	$product_query = "SELECT * FROM addproduct where status='approved' LIMIT $start,$limit";
+	$product_query = "SELECT * FROM addproduct LIMIT $start,$limit";
 	$run_query = mysqli_query($con,$product_query);
 	if(mysqli_num_rows($run_query) > 0)
 	{
@@ -79,7 +80,9 @@ if(isset($_POST["getProduct"]))
 						</div>
 					
 				</div>	
+				
 			";
+
 		}
 	}
 }
@@ -276,17 +279,23 @@ if (isset($_POST["Common"]))
 							<div class='col-md-3'><img src='farmer_images/$pro_image' width='60px' height='50px'></div>
 							<div class='col-md-3'>$pro_name</div>
 							
-							<div class='col-md-3'>$pro_price Rs</div>
+							<div class='col-md-3'>$.$pro_price.00</div>
 
 						</div>
 						";
 						$no=$no+1;
 				}
+					echo "
+						<a style='float:right;' href='cart.php' class='btn btn-primary'>Edit&nbsp;&nbsp;<span class='glyphicon glyphicon-edit'></span></a>
+						";
+					exit();
+				
 			}
 		}
 					
 		//cart.php 
 		$pro_id='';
+		$total_amt='';
 		if(isset($_POST["checkout"]))
 		{
 			
@@ -371,8 +380,8 @@ if (isset($_POST["Common"]))
 			<input type="hidden" name="item_name_'.$x.'" value="'.$row["product_title"].'">
 			<input type="hidden" name="item_number_'.$x.'" value="'.$x.'">
 			<input type="hidden" name="amount_'.$x.'" value="'.$row["price"].'">
-			<input type="hidden" name="amount_'.$x.'" value="'.$row["price"].'">
-			<input type="hidden" name="quantity_'.$x.'" value="'.$row["qty"].'">';
+			<input type="hidden" name="quantity_'.$x.'" value="'.$row["qty"].'">
+			<input type="hidden" name="units_'.$x.'" value="'.$row["units"].'">';
 			
 			}
 			
@@ -393,7 +402,6 @@ if (isset($_POST["Common"]))
 
 
 
-
 	
 	
 	if(isset($_POST["get_seleted_Category"]) || isset($_POST["search"]))
@@ -401,7 +409,7 @@ if (isset($_POST["Common"]))
 	if(isset($_POST["get_seleted_Category"]))
 	{	
 		$id = $_POST["cat_id"];
-		$sql = "SELECT * FROM addproduct WHERE product_cat = '$id' AND status='approved'";
+		$sql = "SELECT * FROM addproduct WHERE product_cat = '$id'";
 	}
 	else
 	{
@@ -449,11 +457,13 @@ if (isset($_POST["Common"]))
 							$pro_title<br>
 							$pro_price Rs<br>
 							<button pid='$pro_id' id='product' class='act_btn 'style='width:103px;'>Add To Cart</button>
-							<a href='view.php?product_id=$pro_id'><button pid='$pro_id' class='act_btn '>View</button>
+							<a href='view.php?product_id=$pro_id'><button pid='$pro_id' class='act_btn' >View</button></a>
 						</div>
 					
 				</div>	
 			";
+			
+
 		}
 	}
 		
@@ -539,6 +549,10 @@ if(isset($_POST["UpdateCart"]))
 	}
 }
 
-
 ?>
+
+
+
+
+
 
